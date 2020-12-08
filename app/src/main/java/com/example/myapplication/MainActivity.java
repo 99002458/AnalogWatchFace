@@ -18,9 +18,6 @@ public class MainActivity extends Activity {
 
         // Enables Always-on
        // setAmbientEnabled();
-<<<<<<< HEAD
-=======
 
->>>>>>> 83b50aecfbe905ffd6b87740409766b5bfc2e531
     }
 }
