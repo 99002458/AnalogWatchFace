@@ -1,6 +1,6 @@
 <resources>
     <declare-styleable name="AnalogClock">
-        <attr name="dial" format="reference"/>
+        <attr name="dial_watch" format="reference"/>
         <attr name="hour" format="reference"/>
         <attr name="minute" format="reference"/>
         <attr name="second" format="reference"/>
