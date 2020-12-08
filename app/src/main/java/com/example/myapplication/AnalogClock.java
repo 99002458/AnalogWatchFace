@@ -12,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.renderscript.Sampler;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -19,6 +20,7 @@ import android.view.View;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Set;
 import java.util.TimeZone;
 
 import static android.text.format.DateUtils.SECOND_IN_MILLIS;
@@ -73,6 +75,7 @@ public class AnalogClock extends View {
     private Drawable mMinuteHand;
     private Drawable mSecondHand;
 
+
     private Calendar mTime;
     private String mDescFormat;
     private TimeZone mTimeZone;
@@ -94,12 +97,12 @@ public class AnalogClock extends View {
         mTime = Calendar.getInstance();
         mDescFormat = ((SimpleDateFormat) DateFormat.getTimeFormat(context)).toLocalizedPattern();
         mEnableSeconds = a.getBoolean(R.styleable.AnalogClock_showSecondHand, true);
-        mDial = a.getDrawable(R.styleable.AnalogClock_dial);
+        mDial = a.getDrawable(R.styleable.AnalogClock_dial_watch);
         if (mDial == null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mDial = context.getDrawable(R.drawable.dial);
+                mDial = context.getDrawable(R.drawable.dial_watch);
             } else {
-                mDial = r.getDrawable(R.drawable.dial);
+                mDial = r.getDrawable(R.drawable.dial_watch);
             }
         }
         mHourHand = a.getDrawable(R.styleable.AnalogClock_hour);

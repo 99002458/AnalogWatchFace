@@ -1,10 +1,11 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.widget.TextView;
 
-public class MainActivity extends WearableActivity {
+public class MainActivity extends Activity {
 
     private TextView mTextView;
 
@@ -17,5 +18,9 @@ public class MainActivity extends WearableActivity {
 
         // Enables Always-on
        // setAmbientEnabled();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 83b50aecfbe905ffd6b87740409766b5bfc2e531
     }
 }
