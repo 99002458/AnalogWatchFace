@@ -502,7 +502,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
                 MyWatchFace m = new MyWatchFace();
                 m.setTextSizeForWidth(mDigitalBackgrPaint, 250, mDigitalTime);
                 canvas.drawText(mDigitalTime, mCenterX - (18 * mDigitalTime.length()), mCenterY + 180, mDigitalBackgrPaint);
-                m.setTextSizeForWidth(mDigitalBackgrPaint, 300, mDigitalDate);
+                m.setTextSizeForWidth(mDigitalBackgrPaint, 70, mDigitalDate);
                 canvas.drawText(mDigitalDate, mCenterX - (5 * mDigitalTime.length()), mCenterY - 40, mDigitalBackgrPaint);
 
 
