@@ -1,3 +1,5 @@
+package com.example.mywatchface;
+
 public class MyData {
     enum mDay {
         SUN,MON,TUE,WED,THU,FRI,SAT
