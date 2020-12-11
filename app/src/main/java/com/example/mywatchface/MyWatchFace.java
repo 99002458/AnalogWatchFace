@@ -25,11 +25,15 @@ import android.view.SurfaceHolder;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
+import java.time.LocalDateTime;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import androidx.palette.graphics.Palette;
+
+import static java.time.LocalDateTime.now;
 
 /**
  * Analog watch face with a ticking second hand. In ambient mode, the second hand isn"t
@@ -44,6 +48,27 @@ import androidx.palette.graphics.Palette;
  * https://codelabs.developers.google.com/codelabs/watchface/index.html#0
  */
 public class MyWatchFace extends CanvasWatchFaceService {
+
+    private void setTextSizeForWidth(Paint paint, float desiredWidth,
+                                     String text) {
+
+        // Pick a reasonably large value for the test. Larger values produce
+        // more accurate results, but may cause problems with hardware
+        // acceleration. But there are workarounds for that, too; refer to
+        // http://stackoverflow.com/questions/6253528/font-size-too-large-to-fit-in-cache
+        final float testTextSize = 48f;
+
+        // Get the bounds of the text, using our testTextSize.
+        paint.setTextSize(testTextSize);
+        Rect bounds = new Rect();
+        paint.getTextBounds(text, 0, text.length(), bounds);
+
+        // Calculate the desired size as a proportion of our testTextSize.
+        float desiredTextSize = testTextSize * desiredWidth / bounds.width();
+
+        // Set the paint for that size.
+        paint.setTextSize(desiredTextSize);
+    }
 
     /*
      * Updates rate in milliseconds for interactive mode. We update once a second to advance the
@@ -85,7 +110,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
     private class Engine extends CanvasWatchFaceService.Engine {
         private static final float HOUR_STROKE_WIDTH = 5f;
         private static final float MINUTE_STROKE_WIDTH = 3f;
-        private static final float SECOND_TICK_STROKE_WIDTH = 2f;
+        private static final float SECOND_TICK_STROKE_WIDTH = 3f;
 
         private static final float CIRCLE_RADIUS = 3f;
         private static final float CENTER_GAP = 10f;
@@ -125,6 +150,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
         private boolean mAmbient;
         private boolean mLowBitAmbient;
         private boolean mBurnInProtection;
+
 
         @Override
         public void onCreate(SurfaceHolder holder) {
@@ -294,14 +320,14 @@ public class MyWatchFace extends CanvasWatchFaceService {
              * entire screen, not just the usable portion.
              */
             mCenterX = width / 2f;
-            mCenterY = height / 2f;
+            mCenterY = height * 6 / 16f;
 
             /*
              * Calculate lengths of different hands based on watch screen size.
              */
-            mSecondHandLength = (float) (mCenterX * 0.835);
-            sMinuteHandLength = (float) (mCenterX * 0.75);
-            sHourHandLength = (float) (mCenterX * 0.5);
+            mSecondHandLength = (float) (mCenterX * 0.42);
+            sMinuteHandLength = (float) (mCenterX * 0.38);
+            sHourHandLength = (float) (mCenterX * 0.25);
 
             /* Scale loaded background image (more efficient) if surface dimensions change. */
             float scale = ((float) width) / (float) mBackgroundBitmap.getWidth();
@@ -392,36 +418,34 @@ public class MyWatchFace extends CanvasWatchFaceService {
             final int hours = mCalendar.get(Calendar.HOUR);
             final int minutes = mCalendar.get(Calendar.MINUTE);
             final int period = mCalendar.get(Calendar.AM_PM);
+            final int day = mCalendar.get(Calendar.DAY_OF_WEEK);
+            final int date = mCalendar.get(Calendar.DATE);
+            final int month = mCalendar.get(Calendar.MONTH);
 
-            String s = hours + ":" + minutes ;
-            if(period == 0){
-                s = s+" AM";
+            String mDigitalTime, mDigitalDate;
+            if (minutes < 10) {
+                mDigitalTime = hours + ":0" + minutes;
+            } else {
+                mDigitalTime = hours + ":" + minutes;
             }
-            else {
-                s = s + " PM";
+            if (period == 0) {
+                mDigitalTime = mDigitalTime + " AM";
+            } else {
+                mDigitalTime = mDigitalTime + " PM";
             }
+            mDigitalDate = day + " " + date + " " + month;
 
 
-            float innerTickRadius = mCenterX - 20;
-            float outerTickRadius = mCenterX;
+            float innerTickRadius = mCenterX - 90;
+            float outerTickRadius = mCenterX - 70;
             for (int tickIndex = 0; tickIndex < 12; tickIndex++) {
                 float tickRot = (float) (tickIndex * Math.PI * 2 / 12);
                 float innerX = (float) Math.sin(tickRot) * innerTickRadius;
                 float innerY = (float) -Math.cos(tickRot) * innerTickRadius;
                 float outerX = (float) Math.sin(tickRot) * outerTickRadius;
                 float outerY = (float) -Math.cos(tickRot) * outerTickRadius;
-                canvas.drawLine(mCenterX + innerX, mCenterY + innerY,
-                        mCenterX + outerX, mCenterY + outerY, mTickAndCirclePaint);
-                float tickRotsmall = tickRot;
-                for (int i=1 ;i<=4;i++){
-                     tickRotsmall = tickRotsmall + (float)((Math.PI/30));
-                     innerX = (float) Math.sin(tickRotsmall) * (innerTickRadius+10);
-                     innerY = (float) -Math.cos(tickRotsmall) * (innerTickRadius+10);
-                     outerX = (float) Math.sin(tickRotsmall) * outerTickRadius;
-                     outerY = (float) -Math.cos(tickRotsmall) * outerTickRadius;
-                    canvas.drawLine(mCenterX + innerX, mCenterY + innerY,
-                            mCenterX + outerX, mCenterY + outerY, mTickAndCirclePaint);
-                }
+                canvas.drawLine(mCenterX - innerX, mCenterY - innerY,
+                        mCenterX - outerX, mCenterY - outerY, mTickAndCirclePaint);
 
             }
 
@@ -474,10 +498,12 @@ public class MyWatchFace extends CanvasWatchFaceService {
                         mCenterY - mSecondHandLength,
                         mSecondPaint);
 
-                canvas.drawCircle(mCenterX,mCenterY,159,mTickAndCirclePaint);
                 canvas.restore();
-                canvas.drawRect(mCenterX+50,mCenterY+13,mCenterX+105,mCenterY-13,mDigitalBackgrPaint);
-                canvas.drawText(s,mCenterX+55,mCenterY+4,mSecondPaint);
+                MyWatchFace m = new MyWatchFace();
+                m.setTextSizeForWidth(mDigitalBackgrPaint, 250, mDigitalTime);
+                canvas.drawText(mDigitalTime, mCenterX - (18 * mDigitalTime.length()), mCenterY + 180, mDigitalBackgrPaint);
+                m.setTextSizeForWidth(mDigitalBackgrPaint, 300, mDigitalDate);
+                canvas.drawText(mDigitalDate, mCenterX - (5 * mDigitalTime.length()), mCenterY - 40, mDigitalBackgrPaint);
 
 
             }
@@ -488,7 +514,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
                     mTickAndCirclePaint);
 
             /* Restore the canvas" original orientation. */
-           // canvas.restore();
+            // canvas.restore();
 
         }
 
