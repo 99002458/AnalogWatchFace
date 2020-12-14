@@ -17,6 +17,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.example.mywatchface.MyData;
+
 
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceService;
@@ -193,7 +195,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
             mWatchHandColor = Color.WHITE;
             mWatchHandHighlightColor = Color.RED;
             mWatchHandShadowColor = Color.BLACK;
-            mDigitalBackgrClockColor = Color.GREEN;
+            mDigitalBackgrClockColor = Color.WHITE;
 
             mHourPaint = new Paint();
             mHourPaint.setColor(mWatchHandColor);
@@ -425,6 +427,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
             final int month = mCalendar.get(Calendar.MONTH);
 
             String mDigitalTime, mDigitalDate;
+            mDigitalDate = ""+MyData.getDay(day)+" "+date+" "+MyData.getMonth(month);
             if (minutes < 10) {
                 mDigitalTime = hours + ":0" + minutes;
             } else {
@@ -435,7 +438,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
             } else {
                 mDigitalTime = mDigitalTime + " PM";
             }
-            mDigitalDate = day + " " + date + " " + month;
+            //mDigitalDate = day + " " + date + " " + month;
 
 
             float innerTickRadius = mCenterX - 90;
