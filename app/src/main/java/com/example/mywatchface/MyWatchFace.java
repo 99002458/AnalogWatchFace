@@ -24,6 +24,8 @@ import android.support.wearable.watchface.WatchFaceStyle;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
 
+import androidx.palette.graphics.Palette;
+
 import java.lang.ref.WeakReference;
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -31,7 +33,7 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
-import androidx.palette.graphics.Palette;
+
 
 import static java.time.LocalDateTime.now;
 
