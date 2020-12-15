@@ -42,23 +42,23 @@ public class MyData {
     public  static mMonth getMonth(int month) {
         switch (month) {
             case 2:
-                return mMonth.November;
-            case 3:
                 return mMonth.March;
-            case 4:
+            case 3:
                 return mMonth.April;
-            case 5:
+            case 4:
                 return mMonth.May;
-            case 6:
+            case 5:
                 return mMonth.June;
-            case 7:
+            case 6:
                 return mMonth.July;
-            case 8:
+            case 7:
                 return mMonth.August;
-            case 9:
+            case 8:
                 return mMonth.September;
-            case 10:
+            case 9:
                 return mMonth.October;
+            case 10:
+                return mMonth.November;
             case 11:
                 return mMonth.DECEMBER;
             case 12:
