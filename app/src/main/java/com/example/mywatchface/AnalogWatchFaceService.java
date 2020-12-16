@@ -1,6 +1,7 @@
 package com.example.mywatchface;
 
 import android.annotation.SuppressLint;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,42 +16,27 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
-
-import com.example.mywatchface.MyData;
-
-
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
 
-import androidx.palette.graphics.Palette;
+import com.example.mywatchface.MyData;
+import com.example.mywatchface.R;
 
 import java.lang.ref.WeakReference;
-import java.time.LocalDateTime;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.Nullable;
+import androidx.palette.graphics.Palette;
 
-import static java.time.LocalDateTime.now;
+public class AnalogWatchFaceService extends CanvasWatchFaceService {
 
-/**
- * Analog watch face with a ticking second hand. In ambient mode, the second hand isn"t
- * shown. On devices with low-bit ambient mode, the hands are drawn without anti-aliasing in ambient
- * mode. The watch face is drawn with less contrast in mute mode.
- * <p>
- * Important Note: Because watch face apps do not have a default Activity in
- * their project, you will need to set your Configurations to
- * "Do not launch Activity" for both the Wear and/or Application modules. If you
- * are unsure how to do this, please review the "Run Starter project" section
- * in the Google Watch Face Code Lab:
- * https://codelabs.developers.google.com/codelabs/watchface/index.html#0
- */
-public class MyWatchFace extends CanvasWatchFaceService {
 
     private void setTextSizeForWidth(Paint paint, float desiredWidth,
                                      String text) {
@@ -85,21 +71,20 @@ public class MyWatchFace extends CanvasWatchFaceService {
     private static final int MSG_UPDATE_TIME = 0;
 
     @Override
-    public Engine onCreateEngine() {
-        return new Engine();
+    public AnalogWatchFaceService.Engine onCreateEngine() {
+        return new AnalogWatchFaceService.Engine();
     }
 
     private static class EngineHandler extends Handler {
-        private final WeakReference<MyWatchFace.Engine> mWeakReference;
+        private final WeakReference<AnalogWatchFaceService.Engine> mWeakReference;
 
-        public EngineHandler(MyWatchFace.Engine reference) {
+        public EngineHandler(AnalogWatchFaceService.Engine reference) {
             mWeakReference = new WeakReference<>(reference);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            MyWatchFace.Engine engine2 = mWeakReference.get();
-            MyWatchFace.Engine engine = mWeakReference.get();
+            AnalogWatchFaceService.Engine engine = mWeakReference.get();
             if (engine != null) {
                 switch (msg.what) {
                     case MSG_UPDATE_TIME:
@@ -121,7 +106,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
 
         private static final int SHADOW_RADIUS = 6;
         /* Handler to update the time once a second in interactive mode. */
-        private final Handler mUpdateTimeHandler = new EngineHandler(this);
+        private final Handler mUpdateTimeHandler = new AnalogWatchFaceService.EngineHandler(this);
         private Calendar mCalendar;
         private final BroadcastReceiver mTimeZoneReceiver = new BroadcastReceiver() {
             @Override
@@ -159,7 +144,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
 
-            setWatchFaceStyle(new WatchFaceStyle.Builder(MyWatchFace.this)
+            setWatchFaceStyle(new WatchFaceStyle.Builder(AnalogWatchFaceService.this)
                     .setAcceptsTapEvents(true)
                     .build());
 
@@ -503,7 +488,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
                         mSecondPaint);
 
                 canvas.restore();
-                MyWatchFace m = new MyWatchFace();
+                AnalogWatchFaceService m = new AnalogWatchFaceService();
                 m.setTextSizeForWidth(mDigitalBackgrPaint, 250, mDigitalTime);
                 canvas.drawText(mDigitalTime, mCenterX - (18 * mDigitalTime.length()), mCenterY + 180, mDigitalBackgrPaint);
                 m.setTextSizeForWidth(mDigitalBackgrPaint, 70, mDigitalDate);
@@ -545,7 +530,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
             }
             mRegisteredTimeZoneReceiver = true;
             IntentFilter filter = new IntentFilter(Intent.ACTION_TIMEZONE_CHANGED);
-            MyWatchFace.this.registerReceiver(mTimeZoneReceiver, filter);
+            AnalogWatchFaceService.this.registerReceiver(mTimeZoneReceiver, filter);
         }
 
         private void unregisterReceiver() {
@@ -553,7 +538,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
                 return;
             }
             mRegisteredTimeZoneReceiver = false;
-            MyWatchFace.this.unregisterReceiver(mTimeZoneReceiver);
+            AnalogWatchFaceService.this.unregisterReceiver(mTimeZoneReceiver);
         }
 
         /**

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.mywatchface">
 
     <!-- Required for complications to receive complication data and open the provider chooser. -->
@@ -19,14 +20,6 @@
 
 
         <service
-            android:name=".MyService"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.BIND_WALLPAPER">
-
-        </service>
-
-        <service
             android:name=".MyWatchFace"
             android:label="@string/my_analog_name"
             android:permission="android.permission.BIND_WALLPAPER">
@@ -38,13 +31,34 @@
 
             <meta-data
                 android:name="com.google.android.wearable.watchface.preview"
-                android:resource="@drawable/preview_analog" />
+                android:resource="@drawable/download" />
             <meta-data
                 android:name="com.google.android.wearable.watchface.preview_circular"
-                android:resource="@drawable/preview_analog" />
+                android:resource="@drawable/download2" />
             <meta-data
                 android:name="android.service.wallpaper"
                 android:resource="@xml/watch_face" />
+        </service>
+        <service
+            android:name=".AnalogWatchFaceService"
+            android:label="@string/saved_marker_color"
+            android:permission="android.permission.BIND_WALLPAPER"
+            tools:ignore="MissingClass">
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/watch_face" />
+            <meta-data
+                android:name="com.google.android.wearable.watchface.preview"
+                android:resource="@drawable/download2" />
+            <meta-data
+                android:name="com.google.android.wearable.watchface.preview_circular"
+                android:resource="@drawable/watchface" />
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+                <category
+                    android:name=
+                        "com.google.android.wearable.watchface.category.WATCH_FACE" />
+            </intent-filter>
         </service>
     </application>
 

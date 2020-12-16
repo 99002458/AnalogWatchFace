@@ -39,7 +39,8 @@ public class MyData {
 
         }
     }
-    public  static mMonth getMonth(int month) {
+
+    public static mMonth getMonth(int month) {
         switch (month) {
             case 2:
                 return mMonth.March;
