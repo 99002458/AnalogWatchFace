@@ -1,6 +1,7 @@
 package com.example.mywatchface;
 
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.ContactsContract;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
@@ -27,10 +29,28 @@ import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+import androidx.core.app.NotificationCompat;
 import androidx.palette.graphics.Palette;
 
 public class AnalogWatchFaceService extends CanvasWatchFaceService {
 
+
+    int notificationId = 001;
+    // The channel ID of the notification.
+    String id = "my_channel_01";
+    // Build intent for notification content
+    Intent viewIntent = new Intent(this, ContactsContract.CommonDataKinds.Email.class);
+    PendingIntent viewPendingIntent =
+            PendingIntent.getActivity(this, 0, viewIntent, 0);
+
+    // Notification channel ID is ignored for Android 7.1.1
+// (API level 25) and lower.
+    NotificationCompat.Builder notificationBuilder =
+            new NotificationCompat.Builder(this, id)
+                    .setSmallIcon(R.drawable.preference_wrapped_icon)
+                    .setContentTitle("eventTitle")
+                    .setContentText("eventLocation")
+                    .setContentIntent(viewPendingIntent);
 
     private void setTextSizeForWidth(Paint paint, float desiredWidth,
                                      String text) {
