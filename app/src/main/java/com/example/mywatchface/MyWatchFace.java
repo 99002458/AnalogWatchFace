@@ -418,7 +418,10 @@ public class MyWatchFace extends CanvasWatchFaceService {
              * creates them on top of the photo.
              */
 
-            final int hours = mCalendar.get(Calendar.HOUR);
+            int hours = mCalendar.get(Calendar.HOUR);
+            if(hours == 0){
+                hours = 12;
+            }
             final int minutes = mCalendar.get(Calendar.MINUTE);
             final int period = mCalendar.get(Calendar.AM_PM);
             final int day = mCalendar.get(Calendar.DAY_OF_WEEK);

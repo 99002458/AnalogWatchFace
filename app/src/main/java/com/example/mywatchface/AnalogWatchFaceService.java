@@ -35,23 +35,6 @@ import androidx.palette.graphics.Palette;
 public class AnalogWatchFaceService extends CanvasWatchFaceService {
 
 
-    int notificationId = 001;
-    // The channel ID of the notification.
-    String id = "my_channel_01";
-    // Build intent for notification content
-    Intent viewIntent = new Intent(this, ContactsContract.CommonDataKinds.Email.class);
-    PendingIntent viewPendingIntent =
-            PendingIntent.getActivity(this, 0, viewIntent, 0);
-
-    // Notification channel ID is ignored for Android 7.1.1
-// (API level 25) and lower.
-    NotificationCompat.Builder notificationBuilder =
-            new NotificationCompat.Builder(this, id)
-                    .setSmallIcon(R.drawable.preference_wrapped_icon)
-                    .setContentTitle("eventTitle")
-                    .setContentText("eventLocation")
-                    .setContentIntent(viewPendingIntent);
-
     private void setTextSizeForWidth(Paint paint, float desiredWidth,
                                      String text) {
 
@@ -113,6 +96,7 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
         private static final float HOUR_STROKE_WIDTH = 5f;
         private static final float MINUTE_STROKE_WIDTH = 3f;
         private static final float SECOND_TICK_STROKE_WIDTH = 3f;
+        private static final float SMALL_TICK_STROKE_WIDTH = 2f;
 
         private static final float CIRCLE_RADIUS = 3f;
         private static final float CENTER_GAP = 10f;
@@ -138,6 +122,7 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
         private float sHourHandLength;
         /* Colors for all hands (hour, minute, seconds, ticks) based on photo loaded. */
         private int mWatchHandColor;
+        private int mWatchTickColor;
         private int mWatchHandHighlightColor;
         private int mWatchHandShadowColor;
         private int mDigitalBackgrClockColor;
@@ -147,6 +132,8 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
         private Paint mTickAndCirclePaint;
         private Paint mBackgroundPaint;
         private Paint mDigitalBackgrPaint;
+        private Paint mSmallTickPaint;
+        private Paint mBigTickPaint;
         private Bitmap mBackgroundBitmap;
         private Bitmap mGrayBackgroundBitmap;
         private boolean mAmbient;
@@ -191,6 +178,7 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
         private void initializeWatchFace() {
             /* Set defaults for colors */
             mWatchHandColor = Color.WHITE;
+            mWatchTickColor = Color.GREEN;
             mWatchHandHighlightColor = Color.RED;
             mWatchHandShadowColor = Color.BLACK;
             mDigitalBackgrClockColor = Color.WHITE;
@@ -212,6 +200,7 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
             mSecondPaint = new Paint();
             mSecondPaint.setColor(mWatchHandHighlightColor);
             mSecondPaint.setStrokeWidth(SECOND_TICK_STROKE_WIDTH);
+            mSecondPaint.setStyle(Paint.Style.FILL);
             mSecondPaint.setAntiAlias(true);
 
             mSecondPaint.setShadowLayer(SHADOW_RADIUS, 0, 0, mWatchHandShadowColor);
@@ -222,6 +211,20 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
             mTickAndCirclePaint.setAntiAlias(true);
             mTickAndCirclePaint.setStyle(Paint.Style.STROKE);
             mTickAndCirclePaint.setShadowLayer(SHADOW_RADIUS, 0, 0, mWatchHandShadowColor);
+
+            mSmallTickPaint = new Paint();
+            mSmallTickPaint.setColor(mWatchTickColor);
+            mSmallTickPaint.setStrokeWidth(SMALL_TICK_STROKE_WIDTH);
+            mSmallTickPaint.setAntiAlias(true);
+            mSmallTickPaint.setStrokeCap(Paint.Cap.ROUND);
+            mSmallTickPaint.setStyle(Paint.Style.STROKE);
+
+            mBigTickPaint = new Paint();
+            mBigTickPaint.setColor(mWatchTickColor);
+            mBigTickPaint.setStrokeWidth(SECOND_TICK_STROKE_WIDTH);
+            mBigTickPaint.setStrokeCap(Paint.Cap.ROUND);
+            mBigTickPaint.setAntiAlias(true);
+            mBigTickPaint.setStyle(Paint.Style.STROKE);
 
             mDigitalBackgrPaint = new Paint();
             mDigitalBackgrPaint.setColor(mDigitalBackgrClockColor);
@@ -266,9 +269,13 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
                 mMinutePaint.setColor(Color.WHITE);
                 mSecondPaint.setColor(Color.WHITE);
                 mDigitalBackgrPaint.setColor(Color.WHITE);
+                mBigTickPaint.setColor(Color.WHITE);
+                mSmallTickPaint.setColor(Color.WHITE);
 
                 mHourPaint.setAntiAlias(false);
                 mMinutePaint.setAntiAlias(false);
+                mBigTickPaint.setAntiAlias(false);
+                mSmallTickPaint.setAntiAlias(false);
                 mSecondPaint.setAntiAlias(false);
                 mTickAndCirclePaint.setAntiAlias(false);
 
@@ -276,6 +283,8 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
                 mMinutePaint.clearShadowLayer();
                 mSecondPaint.clearShadowLayer();
                 mTickAndCirclePaint.clearShadowLayer();
+                mBigTickPaint.clearShadowLayer();
+                mSmallTickPaint.clearShadowLayer();
 
             } else {
                 mHourPaint.setColor(mWatchHandColor);
@@ -283,17 +292,25 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
                 mSecondPaint.setColor(mWatchHandHighlightColor);
                 mTickAndCirclePaint.setColor(mWatchHandColor);
                 mDigitalBackgrPaint.setColor(mDigitalBackgrClockColor);
+                mBigTickPaint.setColor(mWatchTickColor);
+                mSmallTickPaint.setColor(mWatchTickColor);
 
 
                 mHourPaint.setAntiAlias(true);
                 mMinutePaint.setAntiAlias(true);
                 mSecondPaint.setAntiAlias(true);
                 mTickAndCirclePaint.setAntiAlias(true);
+                mDigitalBackgrPaint.setAntiAlias(true);
+                mBigTickPaint.setAntiAlias(true);
+                mSmallTickPaint.setAntiAlias(true);
 
                 mHourPaint.setShadowLayer(SHADOW_RADIUS, 0, 0, mWatchHandShadowColor);
                 mMinutePaint.setShadowLayer(SHADOW_RADIUS, 0, 0, mWatchHandShadowColor);
                 mSecondPaint.setShadowLayer(SHADOW_RADIUS, 0, 0, mWatchHandShadowColor);
                 mTickAndCirclePaint.setShadowLayer(SHADOW_RADIUS, 0, 0, mWatchHandShadowColor);
+                mBigTickPaint.setShadowLayer(SHADOW_RADIUS, 0, 0, mWatchHandShadowColor);
+                mSmallTickPaint.setShadowLayer(SHADOW_RADIUS, 0, 0, mWatchHandShadowColor);
+
             }
         }
 
@@ -322,14 +339,14 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
              * entire screen, not just the usable portion.
              */
             mCenterX = width / 2f;
-            mCenterY = height * 6 / 16f;
+            mCenterY = height / 2f;
 
             /*
              * Calculate lengths of different hands based on watch screen size.
              */
-            mSecondHandLength = (float) (mCenterX * 0.42);
-            sMinuteHandLength = (float) (mCenterX * 0.38);
-            sHourHandLength = (float) (mCenterX * 0.25);
+            mSecondHandLength = (float) (mCenterX * 0.72);
+            sMinuteHandLength = (float) (mCenterX * 0.58);
+            sHourHandLength = (float) (mCenterX * 0.45);
 
             /* Scale loaded background image (more efficient) if surface dimensions change. */
             float scale = ((float) width) / (float) mBackgroundBitmap.getWidth();
@@ -397,6 +414,7 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
 
             drawBackground(canvas);
             drawWatchFace(canvas);
+            drawNumeral(canvas);
         }
 
         private void drawBackground(Canvas canvas) {
@@ -407,6 +425,23 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
                 canvas.drawBitmap(mGrayBackgroundBitmap, 0, 0, mBackgroundPaint);
             } else {
                 canvas.drawBitmap(mBackgroundBitmap, 0, 0, mBackgroundPaint);
+            }
+        }
+
+        private void drawNumeral(Canvas canvas) {
+            if (!mAmbient) {
+                mSmallTickPaint.setTextSize(12);
+                int[] numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+                Rect rect = new Rect();
+
+                for (int number : numbers) {
+                    String tmp = String.valueOf(number);
+                    mSmallTickPaint.getTextBounds(tmp, 0, tmp.length(), rect);
+                    double angle = Math.PI / 6 * (number - 3);
+                    int x = (int) (mCenterX + Math.cos(angle) * (mCenterY - 30) - rect.width() / 2);
+                    int y = (int) (mCenterY + Math.sin(angle) * (mCenterY - 30) + rect.height() / 2);
+                    canvas.drawText(tmp, x, y, mSmallTickPaint);
+                }
             }
         }
 
@@ -438,9 +473,8 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
             }
             //mDigitalDate = day + " " + date + " " + month;
 
-
-            float innerTickRadius = mCenterX - 90;
-            float outerTickRadius = mCenterX - 70;
+            float innerTickRadius = mCenterX - 15;
+            float outerTickRadius = mCenterX;
             for (int tickIndex = 0; tickIndex < 12; tickIndex++) {
                 float tickRot = (float) (tickIndex * Math.PI * 2 / 12);
                 float innerX = (float) Math.sin(tickRot) * innerTickRadius;
@@ -448,8 +482,18 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
                 float outerX = (float) Math.sin(tickRot) * outerTickRadius;
                 float outerY = (float) -Math.cos(tickRot) * outerTickRadius;
                 canvas.drawLine(mCenterX - innerX, mCenterY - innerY,
-                        mCenterX - outerX, mCenterY - outerY, mTickAndCirclePaint);
+                        mCenterX - outerX, mCenterY - outerY, mBigTickPaint);
 
+                float tickRotsmall = tickRot;
+                for (int i = 1; i <= 4; i++) {
+                    tickRotsmall = tickRotsmall + (float) ((Math.PI / 30));
+                    innerX = (float) Math.sin(tickRotsmall) * (innerTickRadius + 10);
+                    innerY = (float) -Math.cos(tickRotsmall) * (innerTickRadius + 10);
+                    outerX = (float) Math.sin(tickRotsmall) * outerTickRadius;
+                    outerY = (float) -Math.cos(tickRotsmall) * outerTickRadius;
+                    canvas.drawLine(mCenterX + innerX, mCenterY + innerY,
+                            mCenterX + outerX, mCenterY + outerY, mSmallTickPaint);
+                }
             }
 
             /*
@@ -503,18 +547,21 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
 
                 canvas.restore();
                 AnalogWatchFaceService m = new AnalogWatchFaceService();
-                m.setTextSizeForWidth(mDigitalBackgrPaint, 250, mDigitalTime);
-                canvas.drawText(mDigitalTime, mCenterX - (18 * mDigitalTime.length()), mCenterY + 180, mDigitalBackgrPaint);
-                m.setTextSizeForWidth(mDigitalBackgrPaint, 70, mDigitalDate);
-                canvas.drawText(mDigitalDate, mCenterX - (5 * mDigitalTime.length()), mCenterY - 40, mDigitalBackgrPaint);
+                m.setTextSizeForWidth(mDigitalBackgrPaint, 7, day + "");
+                canvas.drawText(MyData.getMonth(month) + " " + date, mCenterX + (4 * (MyData.getMonth(month) + " " + date).length()), mCenterY + 6, mDigitalBackgrPaint);
+                m.setTextSizeForWidth(mDigitalBackgrPaint, 7, day + "");
+                canvas.drawText(MyData.getDay(day) + "", mCenterX - (3 * (MyData.getDay(day) + "").length()), mCenterY + 120, mDigitalBackgrPaint);
+                m.setTextSizeForWidth(mDigitalBackgrPaint, 7, day + "");
+                canvas.drawText(mDigitalTime, mCenterX - (3 * (mDigitalTime.length())), mCenterY - 105, mDigitalBackgrPaint);
 
-
+                canvas.drawCircle(mCenterX - 80, mCenterY, 30, mDigitalBackgrPaint);
             }
             canvas.drawCircle(
                     mCenterX,
                     mCenterY,
                     CIRCLE_RADIUS,
                     mTickAndCirclePaint);
+
 
             /* Restore the canvas" original orientation. */
             // canvas.restore();

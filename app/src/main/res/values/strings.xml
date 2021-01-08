@@ -2,6 +2,8 @@
     <string name="app_name">MyWatchface</string>
     <string name="message">Watch face tapped</string>
     <string name="my_analog_name">My Analog</string>
+    <string name="my_new_analog_name">My New Analog</string>
+
     <string name="opengl_name">Sample OpenGL</string>
     <string name="interactive_name">Sample Interactive</string>
     <string name="analog_complication">Sample Analog</string>
@@ -37,6 +39,7 @@
     <string name="analog_complication_config">Analog Complication Config</string>
     <string name="add_complication">Add Complication</string>
     <string name="edit_complication">Edit Complication <xliff:g id="name" example="World Clock">%1$s</xliff:g></string>
+
 
     <string-array name="color_array">
         <item>@string/color_black</item>

@@ -31,7 +31,7 @@
 
             <meta-data
                 android:name="com.google.android.wearable.watchface.preview"
-                android:resource="@drawable/download" />
+                android:resource="@drawable/preview_my_watchface" />
             <meta-data
                 android:name="com.google.android.wearable.watchface.preview_circular"
                 android:resource="@drawable/download2" />
@@ -41,7 +41,7 @@
         </service>
         <service
             android:name=".AnalogWatchFaceService"
-            android:label="@string/saved_marker_color"
+            android:label="@string/my_new_analog_name"
             android:permission="android.permission.BIND_WALLPAPER"
             tools:ignore="MissingClass">
             <meta-data
@@ -49,7 +49,7 @@
                 android:resource="@xml/watch_face" />
             <meta-data
                 android:name="com.google.android.wearable.watchface.preview"
-                android:resource="@drawable/download2" />
+                android:resource="@drawable/preview_my_analog_watchface" />
             <meta-data
                 android:name="com.google.android.wearable.watchface.preview_circular"
                 android:resource="@drawable/watchface" />
