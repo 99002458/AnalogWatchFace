@@ -494,7 +494,20 @@ public class AnalogWatchFaceService extends CanvasWatchFaceService {
                     canvas.drawLine(mCenterX + innerX, mCenterY + innerY,
                             mCenterX + outerX, mCenterY + outerY, mSmallTickPaint);
                 }
+
             }
+            for(int i = 0;i<30;i++){
+              float  compassTick = 0;
+              compassTick = compassTick + (float)((Math.PI/30));
+                float innerX = (float) Math.sin(compassTick) * (innerTickRadius-80 );
+               float innerY = (float) -Math.cos(compassTick) * (innerTickRadius-80 );
+                float outerX = (float) Math.sin(compassTick) * outerTickRadius-80;
+                float outerY = (float) -Math.cos(compassTick) * outerTickRadius-80;
+                canvas.drawLine(mCenterX -80+ innerX, mCenterY -10+innerY,
+                        mCenterX-80 + outerX, mCenterY+100 + outerY, mSmallTickPaint);
+            }
+
+
 
             /*
              * These calculations reflect the rotation in degrees per unit of time, e.g.,
